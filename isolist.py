@@ -35,7 +35,7 @@ def getIsoList():
             name = node.getElementsByTagName('longdescription')
             iso.longdescription = name[0].childNodes[0].data
                     
-            name = node.getElementsByTagName('image')
+            name = node.getElementsByTagName('picture')
             iso.image = name[0].childNodes[0].data
 
             name = node.getElementsByTagName('filename')
