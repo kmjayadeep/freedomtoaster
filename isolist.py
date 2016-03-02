@@ -1,5 +1,7 @@
+#!/usr/bin/python
 import os
 import re
+import pickle
 from xml.dom.minidom import parse
 import xml.dom.minidom
 
@@ -11,6 +13,13 @@ class Iso:
         self.longdescription = ''
         self.image = ''
         self.filename = ''
+
+    def printDetails(self):
+        print(self.name)
+        print(self.description)
+        print(self.longdescription)
+        print(self.image)
+        print(self.filename)
 
 def getIsoList():    
     numIsos = 0          
@@ -48,3 +57,5 @@ def getIsoList():
 
 def getNoIsos():
            return numIsos
+
+print(getIsoList())
