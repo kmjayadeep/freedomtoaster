@@ -8,17 +8,12 @@ class FlowBoxWindow(Gtk.Window):
         Gtk.Window.__init__(self, title="FlowBox Demo")
         self.set_border_width(10)
         self.set_default_size(300, 250)
-	
-        hb = Gtk.HeaderBar()
-        hb.set_show_close_button(True)
-        hb.props.title = "HeaderBar example"
-        self.set_titlebar(hb)
 
-        # header = Gtk.HeaderBar(title="Flow Box")
-        # header.set_subtitle("Sample FlowBox app")
-        # header.props.show_close_button = True
+        header = Gtk.HeaderBar(title="Flow Box")
+        header.set_subtitle("Sample FlowBox app")
+        header.props.show_close_button = True
 
-        # self.set_titlebar(header)
+        self.set_titlebar(header)
 
         scrolled = Gtk.ScrolledWindow()
         scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -35,9 +30,6 @@ class FlowBoxWindow(Gtk.Window):
         self.add(scrolled)
         self.show_all()
 
-
-
-
     def color_swatch_new(self, str_color):
         color = Gdk.color_parse(str_color)
 
@@ -53,73 +45,10 @@ class FlowBoxWindow(Gtk.Window):
         return button
 
     def create_flowbox(self, flowbox):
-        colors = [
-        'AliceBlue',
-        'AntiqueWhite',
-        'AntiqueWhite1',
-        'AntiqueWhite2',
-        'AntiqueWhite3',
-        'AntiqueWhite4',
-        'aqua',
-        'aquamarine',
-        'aquamarine1',
-        'aquamarine2',
-        'aquamarine3',
-        'aquamarine4',
-        'azure',
-        'azure1',
-        'azure2',
-        'azure3',
-        'azure4',
-        'beige',
-        'bisque',
-        'bisque1',
-        'bisque2',
-        'bisque3',
-        'bisque4',
-        'black',
-        'BlanchedAlmond',
-        'blue',
-        'blue1',
-        'blue2',
-        'blue3',
-        'blue4',
-        'BlueViolet',
-        'brown',
-        'brown1',
-        'brown2',
-        'brown3',
-        'brown4',
-        'burlywood',
-        'burlywood1',
-        'burlywood2',
-        'burlywood3',
-        'burlywood4',
-        'CadetBlue',
-        'CadetBlue1',
-        'CadetBlue2',
-        'CadetBlue3',
-        'CadetBlue4',
-        'chartreuse',
-        'chartreuse1',
-        'chartreuse2',
-        'chartreuse3',
-        'chartreuse4',
-        'chocolate',
-        'chocolate1',
-        'chocolate2',
-        'chocolate3',
-        'chocolate4',
-        'coral',
-        'coral1',
-        'coral2',
-        'coral3',
-        'coral4'
-        ]
-
-        for color in colors:
-            button = self.color_swatch_new(color)
-            flowbox.add(button)
+        button_names = ['b1','b2','b3','b4','b5']
+        for i in button_names:
+            b = Gtk.Button(label=i)
+            flowbox.add(b)
 
 
 win = FlowBoxWindow()
