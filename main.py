@@ -1,3 +1,4 @@
+import os,sys
 import gi
 import isolist as iso
 gi.require_version('Gtk', '3.0')
@@ -35,8 +36,25 @@ class FlowBoxWindow(Gtk.Window):
 
     def create_flowbox(self, flowbox):
         for i in list_of_isos:
-            b = Gtk.Button(label=i.name)
-            flowbox.add(b)
+            
+            button = Gtk.Button()
+            grid = Gtk.Grid(orientation=Gtk.Orientation.VERTICAL)
+
+            label = Gtk.Label()
+            label.set_text(i.name)
+            label.set_justify(Gtk.Justification.CENTER)       
+
+            img = Gtk.Image()
+            img.set_from_file ("iso/"+i.image)
+            img.set_pixel_size(400)
+            grid.add(img)
+
+            grid.add(label)
+            # grid.attach_next_to(button, label, Gtk.PositionType.BOTTOM)
+
+            button.add(grid)
+            button.add(label)
+            flowbox.add(button)
 
 
 
