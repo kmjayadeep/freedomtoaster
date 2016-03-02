@@ -1,10 +1,11 @@
 import gi
+import isolist as iso
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
 class FlowBoxWindow(Gtk.Window):
 
-    def __init__(self):
+    def __init__(self,list_of_isos):
         Gtk.Window.__init__(self, title="FlowBox Demo")
         self.set_border_width(10)
         self.set_default_size(300, 250)
@@ -30,28 +31,17 @@ class FlowBoxWindow(Gtk.Window):
         self.add(scrolled)
         self.show_all()
 
-    def color_swatch_new(self, str_color):
-        color = Gdk.color_parse(str_color)
 
-        rgba = Gdk.RGBA.from_color(color)
-        button = Gtk.Button()
-
-        area = Gtk.DrawingArea()
-        area.set_size_request(24, 24)
-        area.override_background_color(0, rgba)
-
-        button.add(area)
-
-        return button
 
     def create_flowbox(self, flowbox):
-        button_names = ['b1','b2','b3','b4','b5']
-        for i in button_names:
-            b = Gtk.Button(label=i)
+        for i in list_of_isos:
+            b = Gtk.Button(label=i.name)
             flowbox.add(b)
 
 
-win = FlowBoxWindow()
+
+list_of_isos=iso.getIsoList()
+win = FlowBoxWindow(list_of_isos)
 win.connect("delete-event", Gtk.main_quit)
 win.show_all()
 Gtk.main()
