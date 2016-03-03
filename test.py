@@ -3,15 +3,16 @@ import gi
 import json
 import isolist
 import inspect
+from subprocess import PIPE,Popen
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
-from gi.repository import Gdk as gdk
 from gi.repository import GdkPixbuf
 
 imageWidth=200
 imageHeight=200
 maxColumns=5
-
+GTK_RESPONSE_ACCEPT=1
+GTK_RESPONSE_REJECT=0
 
 class Window(gtk.Window):
 	def __init__(self,myTitle,isoList):
@@ -19,6 +20,7 @@ class Window(gtk.Window):
 		gtk.Window.__init__(self,title=myTitle)
 		self.set_border_width(10)
 		self.set_default_size(300, 300)
+		self.fullscreen()
 
 		scrolled = gtk.ScrolledWindow()
 		scrolled.set_policy(gtk.PolicyType.NEVER, gtk.PolicyType.AUTOMATIC)
@@ -62,8 +64,20 @@ class Window(gtk.Window):
 
 	def onButtonClick(self,widget,name):
 		iso = next(x for x in self.isoList if x.name==name)
-		print(iso.name)
-		
+
+		dialog = gtk.Dialog("Are you sure?")
+		dialog.add_button("Cancel",GTK_RESPONSE_REJECT)
+		dialog.add_button("Yes",GTK_RESPONSE_ACCEPT)
+		result = dialog.run()
+		if(result==GTK_RESPONSE_ACCEPT):
+			installIso(iso.name)
+			dialog.close()
+		else:
+			dialog.close()
+
+def installIso(name):
+	isoFile="iso/"+name+".iso"
+	print(isoFile)
 
 def main():
 		isoList = isolist.getIsoList()
@@ -72,5 +86,11 @@ def main():
 		win.show_all()
 		gtk.main()	
 
+
+def test():
+	installIso("ubuntu-gnome-15.04-desktop-i386")
+
+
 if __name__=="__main__":
 	main()
+	# test()
