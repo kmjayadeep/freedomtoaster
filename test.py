@@ -1,9 +1,6 @@
 #!/usr/bin/python
 import gi
-import json
 import isolist
-import inspect
-from subprocess import PIPE,Popen
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 from gi.repository import GdkPixbuf
@@ -14,7 +11,9 @@ imageHeight=200
 maxColumns=5
 GTK_RESPONSE_ACCEPT=1
 GTK_RESPONSE_REJECT=0
+GTK_RESPONSE_INFO=2
 DEVICE = "/dev/null"
+SURE_TEXT = "Please make sure that the usb drive is inserted"
 
 class Window(gtk.Window):
 	def __init__(self,myTitle,isoList):
@@ -67,21 +66,39 @@ class Window(gtk.Window):
 	def onButtonClick(self,widget,name):
 		iso = next(x for x in self.isoList if x.name==name)
 
-		dialog = gtk.Dialog("Are you sure?")
+		dialog = gtk.MessageDialog(self)
 		dialog.add_button("Cancel",GTK_RESPONSE_REJECT)
+		dialog.add_button("More Info",GTK_RESPONSE_INFO)
 		dialog.add_button("Yes",GTK_RESPONSE_ACCEPT)
-		dialog.set_transient_for(self)
+		dialog.format_secondary_text(iso.description+"\n\n"+SURE_TEXT)
+		dialog.props.text = "Proceed to Install?" 
+
 		result = dialog.run()
 		if(result==GTK_RESPONSE_ACCEPT):
-			installIso(iso.name)
 			dialog.close()
+			self.progressStep(iso)
+		elif(result==GTK_RESPONSE_INFO):
+			infoDialog = gtk.MessageDialog(dialog)
+			infoDialog.format_secondary_text(iso.longdescription)
+			infoDialog.add_button("OK",GTK_RESPONSE_ACCEPT)
+			infoDialog.run()
+			infoDialog.close()
 		else:
 			dialog.close()
 
-def installIso(name):
-	isoFile="iso/"+name+".iso"
-	print(isoFile)
-	bootable.createbootable(isoFile,DEVICE)
+	def progressStep(self,iso):
+		self.progressBar = gtk.ProgressBar()
+		self.progressDialog = gtk.Dialog()
+		self.progressDialog.add(self.progressBar)
+		installIso(self,iso.filename)
+
+	def updateProgress(self,progress):
+		self.progressBar.set_fraction(progress)
+		print(str(progress*100)+"%")
+
+def installIso(window,fileName):
+	isoFile="iso/"+fileName
+	bootable.createbootable(window,isoFile,DEVICE,window.updateProgress)
 
 def main():
 		isoList = isolist.getIsoList()
@@ -90,11 +107,5 @@ def main():
 		win.show_all()
 		gtk.main()	
 
-
-def test():
-	installIso("ubuntu-gnome-15.04-desktop-i386")
-
-
 if __name__=="__main__":
 	main()
-	# test()

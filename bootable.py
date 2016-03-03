@@ -4,23 +4,27 @@ import time
 import signal
 from subprocess import Popen, PIPE
 from decimal import Decimal, localcontext, ROUND_DOWN
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk as gtk
 
-def createbootable(fileName,device):
+
+def createbootable(window,fileName,device,updateProgress):
+
 	fileSize = getSize(fileName)
 	dd = Popen(['dd'] + ['if='+fileName,'of='+device], stderr=PIPE)
 	while dd.poll() is None:
-	    time.sleep(.3)
-	    dd.send_signal(signal.SIGUSR1)
-	    while 1:
-	        l = dd.stderr.readline()
-	        if b'bytes' in l:
-	        	done = int(l[:l.index(b'bytes')-1])
-	        	updateProgress(done/fileSize*100)
-	        	break
-
-def updateProgress(progress):
-	progress=truncFloat(progress)
-	print(str(progress) + "%")
+		time.sleep(.3)
+		dd.send_signal(signal.SIGUSR1)
+		while 1:
+			l = dd.stderr.readline()
+			if b'bytes' in l:
+				done = int(l[:l.index(b'bytes')-1])
+				if(fileSize!=0):
+					progress=done/fileSize
+					progress=truncFloat(progress)
+					updateProgress(progress)
+				break
 
 def truncFloat(floatNumber):
 	with localcontext() as context:
