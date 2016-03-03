@@ -3,7 +3,6 @@ import re
 from xml.dom.minidom import parse
 import xml.dom.minidom
 
-numIsos = 0
 class Iso:
     def __init__(self):
         self.name = ''
@@ -45,6 +44,3 @@ def getIsoList():
             numIsos += 1
 
     return isoList
-
-def getNoIsos():
-           return numIsos

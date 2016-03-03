@@ -7,12 +7,14 @@ from subprocess import PIPE,Popen
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 from gi.repository import GdkPixbuf
+import bootable
 
 imageWidth=200
 imageHeight=200
 maxColumns=5
 GTK_RESPONSE_ACCEPT=1
 GTK_RESPONSE_REJECT=0
+DEVICE = "/dev/null"
 
 class Window(gtk.Window):
 	def __init__(self,myTitle,isoList):
@@ -68,6 +70,7 @@ class Window(gtk.Window):
 		dialog = gtk.Dialog("Are you sure?")
 		dialog.add_button("Cancel",GTK_RESPONSE_REJECT)
 		dialog.add_button("Yes",GTK_RESPONSE_ACCEPT)
+		dialog.set_transient_for(self)
 		result = dialog.run()
 		if(result==GTK_RESPONSE_ACCEPT):
 			installIso(iso.name)
@@ -78,6 +81,7 @@ class Window(gtk.Window):
 def installIso(name):
 	isoFile="iso/"+name+".iso"
 	print(isoFile)
+	bootable.createbootable(isoFile,DEVICE)
 
 def main():
 		isoList = isolist.getIsoList()
