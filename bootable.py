@@ -9,7 +9,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 
 
-def createbootable(window,fileName,device,updateProgress):
+def createbootable(fileName,device,updateProgress):
 
 	fileSize = getSize(fileName)
 	dd = Popen(['dd'] + ['if='+fileName,'of='+device], stderr=PIPE)
