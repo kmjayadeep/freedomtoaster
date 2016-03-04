@@ -2,12 +2,14 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 import bootable
+from threading import Thread
 
 DEVICE = "/dev/null"
 
-def installIso(fileName):
+def installIso(self,fileName):
 	isoFile="iso/"+fileName
-	bootable.createbootable(isoFile,DEVICE)
+	Thread(target=bootable.createbootable, args=(self,isoFile,DEVICE)).start()
+	# bootable.createbootable(isoFile,DEVICE)
 
 def changePage(assistant):
 	label = gtk.Label('')

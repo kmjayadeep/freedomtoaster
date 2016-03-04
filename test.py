@@ -4,7 +4,8 @@ import isolist
 import helper
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
-from gi.repository import GdkPixbuf
+from gi.repository import Gdk,GdkPixbuf
+Gdk.threads_init()
 
 imageWidth=200
 imageHeight=200
@@ -13,7 +14,6 @@ GTK_RESPONSE_ACCEPT=1
 GTK_RESPONSE_REJECT=0
 GTK_RESPONSE_INFO=2
 SURE_TEXT = "Please make sure that the usb drive is inserted"
-installing = False
 
 class Window(gtk.Window):
 	def __init__(self,myTitle,isoList):
@@ -69,28 +69,31 @@ class Window(gtk.Window):
 		self.createAssistant()
 		
 	def createAssistant(self):
-		assistant = gtk.Assistant()
-		assistant.connect("cancel", cancel_button_clicked)
-		assistant.connect("close", cancel_button_clicked)
+		self.assistant = gtk.Assistant()
+		self.assistant.connect("cancel", cancel_button_clicked)
+		self.assistant.connect("close", cancel_button_clicked)
 		pages=self.generatePages(self.iso)
 		for page in pages:
 			box=page[0]
 			title=page[1]
 			pagetype=page[2]
-			assistant.append_page(box)
-			assistant.set_page_type(box, pagetype)
-			assistant.set_page_title(box, title)
-			assistant.set_page_complete(box, True)
+			self.assistant.append_page(box)
+			self.assistant.set_page_type(box, pagetype)
+			self.assistant.set_page_title(box, title)
+			self.assistant.set_page_complete(box, True)
+			if(len(page)>3):
+				self.box = box
+				self.assistant.set_page_complete(box,False)
 
-		helper.changePage(assistant)
-		assistant.show_all()
-		assistant.set_forward_page_func(self.pageForward)
+		helper.changePage(self.assistant)
+		self.assistant.show_all()
+		self.assistant.set_forward_page_func(self.pageForward)
 
 
 	def pageForward(self,page):
 		print(page)
 		if page==1:
-			helper.installIso(self.iso.filename)
+			helper.installIso(self,self.iso.filename)
 		return page+1
 
 	def generatePages(self,iso):
@@ -99,6 +102,11 @@ class Window(gtk.Window):
 		label = gtk.Label(label=iso.description)
 		label.set_line_wrap(True)
 		boxOne.pack_start(label, True, True, 0)
+
+		boxFour = gtk.Box(orientation=gtk.Orientation.VERTICAL)
+		label = gtk.Label(label=SURE_TEXT)
+		label.set_line_wrap(True)
+		boxFour.pack_start(label, True, True, 0)
 
 		boxTwo = gtk.Box(orientation=gtk.Orientation.VERTICAL)
 		label = gtk.Label(label="Copying Files")
@@ -113,20 +121,18 @@ class Window(gtk.Window):
 		label.set_line_wrap(True)
 		boxThree.pack_start(label, True, True, 0)
 
-		boxFour = gtk.Box(orientation=gtk.Orientation.VERTICAL)
-		label = gtk.Label(label=SURE_TEXT)
-		label.set_line_wrap(True)
-		boxFour.pack_start(label, True, True, 0)
-		self.progressBar = gtk.ProgressBar()
-		self.progressBar.set_fraction(0.0)
-		boxFour.pack_start(self.progressBar,True,True,0)
-
 
 		pages.append([boxOne,iso.name,gtk.AssistantPageType.INTRO])
-		pages.append([boxFour,"Are you sure?",gtk.AssistantPageType.CONFIRM,self.progressBar])
-		# pages.append([boxTwo,"Install",gtk.AssistantPageType.PROGRESS,self.origProgressBar])
+		pages.append([boxFour,"Are you sure?",gtk.AssistantPageType.CONFIRM])
+		pages.append([boxTwo,"Install",gtk.AssistantPageType.PROGRESS,self.origProgressBar])
 		pages.append([boxThree,"Complete",gtk.AssistantPageType.SUMMARY])
 		return pages
+
+
+	def updateProgress(self,progress):
+		self.origProgressBar.set_fraction(progress)
+		self.assistant.set_page_complete(self.box,progress==1)
+		print(str(progress*100)+"%")
 
 def cancel_button_clicked(assistant):
 	assistant.destroy()

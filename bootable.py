@@ -7,12 +7,13 @@ from decimal import Decimal, localcontext, ROUND_DOWN
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
+from gi.repository import GObject as gobject
 window = gtk.Window()
 
 
 
 
-def createbootable(fileName,device):
+def createbootable(self,fileName,device):
 		fileSize = getSize(fileName)
 		dd = Popen(['dd'] + ['if='+fileName,'of='+device], stderr=PIPE, stdout=PIPE)
 		while dd.poll() is None:
@@ -25,13 +26,8 @@ def createbootable(fileName,device):
 					if(fileSize!=0):
 						progress=done/fileSize
 						progress=truncFloat(progress)
-						updateProgress(progress)
+						gobject.idle_add(self.updateProgress, progress)
 					break
-
-def updateProgress(progress):
-	# progressbar.set_fraction(progress)
-	print(str(progress*100)+"%")
-
 def truncFloat(floatNumber):
 	with localcontext() as context:
 		context.rounding = ROUND_DOWN
