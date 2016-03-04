@@ -18,3 +18,4 @@ def changePage(assistant):
 		label = child.get_label()
 		if label == '_Apply':
 			child.set_label('Start')
+

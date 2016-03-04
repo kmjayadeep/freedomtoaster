@@ -81,6 +81,7 @@ class Window(gtk.Window):
 			assistant.set_page_type(box, pagetype)
 			assistant.set_page_title(box, title)
 			assistant.set_page_complete(box, True)
+
 		helper.changePage(assistant)
 		assistant.show_all()
 		assistant.set_forward_page_func(self.pageForward)
@@ -116,14 +117,13 @@ class Window(gtk.Window):
 		label = gtk.Label(label=SURE_TEXT)
 		label.set_line_wrap(True)
 		boxFour.pack_start(label, True, True, 0)
-		# self.progressBar = gtk.ProgressBar()
-		# self.progressBar.set_fraction(0.0)
-		# boxFour.pack_start(self.progressBar,True,True,0)
+		self.progressBar = gtk.ProgressBar()
+		self.progressBar.set_fraction(0.0)
+		boxFour.pack_start(self.progressBar,True,True,0)
 
 
 		pages.append([boxOne,iso.name,gtk.AssistantPageType.INTRO])
-		# pages.append([boxFour,"Are you sure?",gtk.AssistantPageType.CONFIRM,self.progressBar])
-		pages.append([boxFour,"Are you sure?",gtk.AssistantPageType.CONFIRM])
+		pages.append([boxFour,"Are you sure?",gtk.AssistantPageType.CONFIRM,self.progressBar])
 		# pages.append([boxTwo,"Install",gtk.AssistantPageType.PROGRESS,self.origProgressBar])
 		pages.append([boxThree,"Complete",gtk.AssistantPageType.SUMMARY])
 		return pages
