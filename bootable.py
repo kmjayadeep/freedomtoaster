@@ -9,8 +9,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk as gtk
 
 
-def createbootable(fileName,device,updateProgress):
-
+def createbootable(fileName,device):
 	fileSize = getSize(fileName)
 	dd = Popen(['dd'] + ['if='+fileName,'of='+device], stderr=PIPE)
 	while dd.poll() is None:
@@ -25,6 +24,10 @@ def createbootable(fileName,device,updateProgress):
 					progress=truncFloat(progress)
 					updateProgress(progress)
 				break
+
+def updateProgress(progress):
+	# self.progressBar.set_fraction(progress)
+	print(str(progress*100)+"%")
 
 def truncFloat(floatNumber):
 	with localcontext() as context:
