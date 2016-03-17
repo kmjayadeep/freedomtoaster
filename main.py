@@ -15,8 +15,8 @@ GTK_RESPONSE_ACCEPT=1
 GTK_RESPONSE_REJECT=0
 GTK_RESPONSE_INFO=2
 SURE_TEXT = "Please make sure that the usb drive is inserted \n The Device will be formatted"
-# DEVICE = "/dev/null"
 DEVICE = "/dev/sdb"
+DEVICE = "/dev/null"
 CREDITS = "<big>Credits : </big><b>Nisham, Jayadeep, Balagopal (2017)</b>"
 
 class Window(gtk.Window):
@@ -81,6 +81,10 @@ class Window(gtk.Window):
 		self.assistant = gtk.Assistant()
 		self.assistant.connect("cancel", cancel_button_clicked)
 		self.assistant.connect("close", cancel_button_clicked)
+		self.set_default_size(600,600)
+		self.assistant.set_resizable(False)
+
+
 		pages=self.generatePages(self.iso)
 		for page in pages:
 			box=page[0]
